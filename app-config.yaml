@@ -33,11 +33,11 @@ backend:
   database:
     client: pg
     connection:
-      host: localhost
+      host: ${POSTGRES_HOST}
       port: 5432
-      user: backstage
-      password: backstage
-      database: backstage
+      user: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+      database: ${POSTGRES_DB}
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 integrations:
@@ -66,7 +66,7 @@ proxy:
 techdocs:
   builder: 'local' # Alternatives - 'external'
   generator:
-    runIn: 'docker' # Alternatives - 'local'
+    runIn: 'local' # Alternatives - 'local'
   publisher:
     type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
 
@@ -78,8 +78,8 @@ auth:
 
     github:
       development:
-        clientId: Ov23li9oukNzqukoSWgA
-        clientSecret: 1a8b7a7cb42b930b616b1920c1d5521bab558725
+        clientId: ${GITHUB_CLIENT_ID}
+        clientSecret: ${GITHUB_CLIENT_SECRET}
         signIn:
           resolvers:
             # See https://backstage.io/docs/auth/github/provider#resolvers for more resolvers
