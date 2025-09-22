@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: raftriani
+spec:
+  profile:
+    displayName: Rafael Triani
+    email: raftriani@example.com
+    picture: https://example.com/raftriani.jpg
+  memberOf: [development]

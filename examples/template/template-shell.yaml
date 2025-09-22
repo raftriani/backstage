@@ -1,0 +1,172 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: shell-command-example
+  title: Shell Command Example
+  description: Template de exemplo que demonstra como executar comandos shell
+  tags:
+    - shell
+    - example
+    - demo
+spec:
+  owner: raftriani
+  type: example
+  
+  parameters:
+    - title: Informações do Projeto
+      required:
+        - name
+        - command
+      properties:
+        name:
+          title: Nome do Projeto
+          type: string
+          description: Nome único para o projeto
+          pattern: '^([a-z0-9\-]+)$'
+          ui:autofocus: true
+          ui:help: 'Use apenas letras minúsculas, números e hífens'
+        
+        command:
+          title: Comando Shell
+          type: string
+          description: Comando que será executado
+          default: 'dir'
+        
+        args:
+          title: Argumentos
+          type: array
+          description: Argumentos para o comando
+          items:
+            type: string
+          default: ['/B']
+        
+        workingDirectory:
+          title: Diretório de Trabalho
+          type: string
+          description: Diretório onde o comando será executado (opcional)
+          ui:help: 'Se não especificado, usará o workspace do template'
+
+  steps:
+    - id: execute-shell-command
+      name: Executar comando shell
+      action: run:shell
+      input:
+        command: 'cmd'
+        args: 
+          - '/c'
+          - 'echo ${{ parameters.args | join(" ") }}'
+        workingDirectory: ${{ parameters.workingDirectory }}
+
+    - id: create-main-directory
+      name: Criar diretório principal
+      action: run:shell
+      input:
+        command: 'cmd'
+        args: 
+          - '/c'
+          - 'mkdir "${{ parameters.name }}" 2>nul || echo Diretorio ja existe'
+
+    - id: create-subdirectories
+      name: Criar subdiretórios
+      action: run:shell
+      input:
+        command: 'cmd'
+        args: 
+          - '/c'
+          - 'mkdir "${{ parameters.name }}\\docs" 2>nul & mkdir "${{ parameters.name }}\\src" 2>nul'
+
+    - id: create-readme
+      name: Criar README
+      action: run:shell
+      input:
+        command: 'cmd'
+        args: 
+          - '/c'
+          - 'echo ${{ parameters.name }} > "${{ parameters.name }}\\README.md" 2>nul || echo README criado'
+
+    - id: add-readme-content
+      name: Adicionar conteúdo ao README
+      action: run:shell
+      input:
+        command: 'cmd'
+        args: 
+          - '/c'
+          - 'echo Template Backstage >> "${{ parameters.name }}\\README.md" 2>nul || echo Conteudo adicionado'
+
+    - id: create-package-json
+      name: Criar package.json
+      action: run:shell
+      input:
+        command: 'cmd'
+        args:
+          - '/c'
+          - 'echo {"name": "${{ parameters.name }}", "version": "1.0.0"} > "${{ parameters.name }}\\package.json" 2>nul || echo JSON criado'
+
+    - id: create-src-index
+      name: Criar arquivo inicial no src
+      action: run:shell
+      input:
+        command: 'cmd'
+        args:
+          - '/c'
+          - 'cd "${{ parameters.name }}\\src" && type nul > index.js'
+
+    - id: add-content-to-index
+      name: Adicionar conteúdo ao index.js
+      action: run:shell
+      input:
+        command: 'cmd'
+        args:
+          - '/c'
+          - 'cd "${{ parameters.name }}\\src" && echo console.log("Hello World"); > index.js'
+
+    - id: create-docs-readme
+      name: Criar README na pasta docs
+      action: run:shell
+      input:
+        command: 'cmd'
+        args:
+          - '/c'
+          - 'cd "${{ parameters.name }}\\docs" && type nul > README.md'
+
+    - id: add-content-to-docs
+      name: Adicionar conteúdo ao docs README
+      action: run:shell
+      input:
+        command: 'cmd'
+        args:
+          - '/c'
+          - 'cd "${{ parameters.name }}\\docs" && echo Documentacao do projeto > README.md'
+
+    - id: log-completion
+      name: Log de conclusão
+      action: run:shell
+      input:
+        command: 'cmd'
+        args: 
+          - '/c'
+          - 'echo Template executado com sucesso! Projeto ${{ parameters.name }} criado.'
+
+  output:
+    text:
+      - title: 'Projeto Criado'
+        content: |
+          O projeto **${{ parameters.name }}** foi criado com sucesso usando apenas shell commands!
+          
+          ### Estrutura criada:
+          - `${{ parameters.name }}/` - Diretório principal
+          - `${{ parameters.name }}/README.md` - Documentação do projeto
+          - `${{ parameters.name }}/package.json` - Configuração do projeto
+          - `${{ parameters.name }}/docs/` - Diretório para documentação
+          - `${{ parameters.name }}/docs/README.md` - Documentação inicial
+          - `${{ parameters.name }}/src/` - Diretório para código fonte
+          - `${{ parameters.name }}/src/index.js` - Arquivo inicial JavaScript
+          
+          ### Comando executado:
+          ```bash
+          ${{ parameters.command }} ${{ parameters.args | join(' ') }}
+          ```
+          
+          ### Próximos passos:
+          1. Navegue até o diretório: `cd ${{ parameters.name }}`
+          2. Execute o código: `node src/index.js`
