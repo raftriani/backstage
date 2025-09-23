@@ -139,12 +139,12 @@ catalog:
         - allow: [User, Group]
 
     - type: file
-      target: ../../examples/users.yaml
+      target: ../../catalog/entities/users.yaml
       rules:
         - allow: [User, Component, System, API, Resource, Location]
 
     - type: file
-      target: ../../examples/groups.yaml
+      target: ../../catalog/entities/groups.yaml
       rules:
         - allow: [User, Group]
 
