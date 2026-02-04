@@ -27,17 +27,9 @@ backend:
     credentials: true
   # This is for local development only, it is not recommended to use this in production
   # The production database configuration is stored in app-config.production.yaml
-  # database:
-  #   client: better-sqlite3
-  #   connection: ':memory:'
   database:
-    client: pg
-    connection:
-      host: ${POSTGRES_HOST}
-      port: 5432
-      user: ${POSTGRES_USER}
-      password: ${POSTGRES_PASSWORD}
-      database: ${POSTGRES_DB}
+    client: better-sqlite3
+    connection: ':memory:'
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 integrations:
@@ -66,7 +58,7 @@ proxy:
 techdocs:
   builder: 'local' # Alternatives - 'external'
   generator:
-    runIn: 'local' # Alternatives - 'local'
+    runIn: 'docker' # Alternatives - 'local'
   publisher:
     type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
 
@@ -75,15 +67,6 @@ auth:
   providers:
     # See https://backstage.io/docs/auth/guest/provider
     guest: {}
-
-    github:
-      development:
-        clientId: ${GITHUB_CLIENT_ID}
-        clientSecret: ${GITHUB_CLIENT_SECRET}
-        signIn:
-          resolvers:
-            # See https://backstage.io/docs/auth/github/provider#resolvers for more resolvers
-            - resolver: usernameMatchingUserEntityName
 
 scaffolder:
   # see https://backstage.io/docs/features/software-templates/configuration for software template options
@@ -94,39 +77,12 @@ catalog:
     pullRequestBranchName: backstage-integration
   rules:
     - allow: [Component, System, API, Resource, Location]
-
-  # Adicionando o GitHub Provider
-  providers:
-    github:
-      providerId:
-        organization: 'raftriani' # sua organização/usuário GitHub
-        catalogPath: '/catalog-info.yaml'
-        filters:
-          branch: 'main'
-          repository: '^python-app$' # regex específico para o repo python-app
-        schedule:
-          frequency: { minutes: 5 }
-          timeout: { minutes: 3 }
-
-  
   locations:
     # Local example data, file locations are relative to the backend process, typically `packages/backend`
     - type: file
       target: ../../examples/entities.yaml
 
     # Local example template
-    - type: file
-      target: ../../examples/template/template-shell.yaml
-      rules:
-        - allow: [Template]
-
-    # Local example template
-    - type: url
-      target: https://github.com/raftriani/backstage-software-templates/blob/main/python-app/template.yaml
-      rules:
-        - allow: [Template]
-
-    # Shell command example template
     - type: file
       target: ../../examples/template/template.yaml
       rules:
@@ -135,16 +91,6 @@ catalog:
     # Local example organizational data
     - type: file
       target: ../../examples/org.yaml
-      rules:
-        - allow: [User, Group]
-
-    - type: file
-      target: ../../catalog/entities/users.yaml
-      rules:
-        - allow: [User, Component, System, API, Resource, Location]
-
-    - type: file
-      target: ../../catalog/entities/groups.yaml
       rules:
         - allow: [User, Group]
 
